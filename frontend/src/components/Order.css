@@ -1,0 +1,94 @@
+.order-page {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .order-summary {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .order-summary h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .product-details {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .product-details img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .product-details div {
+    flex: 1;
+  }
+  
+  .product-details h4 {
+    font-size: 18px;
+    margin: 0 0 10px;
+  }
+  
+  .checkout-form h3 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  
+  .checkout-form .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .checkout-form label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  
+  .checkout-form input,
+  .checkout-form textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .checkout-form textarea {
+    height: 100px;
+  }
+  
+  .checkout-form button {
+    padding: 10px 20px;
+    background-color: #1c5db5;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  .checkout-form button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+  
+  .checkout-btn {
+    background-color: #1c5db5;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+  }
+  
