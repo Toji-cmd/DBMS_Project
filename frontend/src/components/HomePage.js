@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import "./HomePage.css";
 import { FaSearch } from "react-icons/fa";
 
-
 const HomePage = () => {
     const navigate = useNavigate();
     const [filteredProducts, setFilteredProducts] = useState([]);
@@ -24,8 +23,12 @@ const HomePage = () => {
     });
 
     const [noProductsMessage, setNoProductsMessage] = useState("");
+    const [currentPage, setCurrentPage] = useState(1); // Track the current page
+    const [isLoading, setIsLoading] = useState(false); // Track loading state
 
+    const itemsPerPage = 8; // Change this if you want more/less items per page
 
+    // Memoized list of unique categories
     const uniqueCategories = useMemo(() => {
         const categories = [];
         filteredProducts.forEach((product) => {
@@ -36,6 +39,7 @@ const HomePage = () => {
         return categories;
     }, [filteredProducts]);
 
+    // Memoized list of unique brands
     const uniqueBrands = useMemo(() => {
         const brands = [];
         filteredProducts.forEach((product) => {
@@ -46,12 +50,15 @@ const HomePage = () => {
         return brands;
     }, [filteredProducts]);
 
+    // Fetch products when page loads or when filters are applied
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                let url = "http://localhost:3300/products?";
+                setIsLoading(true); // Start loading
 
+                let url = `${process.env.REACT_APP_API_BACKEND}products?`;
 
+                // Apply filters to the URL
                 if (appliedFilters.searchQuery) url += `name=${appliedFilters.searchQuery}&`;
                 if (appliedFilters.searchBrand) url += `brand=${appliedFilters.searchBrand}&`;
 
@@ -65,21 +72,23 @@ const HomePage = () => {
                 if (appliedFilters.selectedRating) url += `minRating=${appliedFilters.selectedRating}&`;
                 if (appliedFilters.selectedCategory) url += `category=${appliedFilters.selectedCategory}&`;
 
-                url += "limit=80&page=1";
+                // Add pagination parameters
+                url += `limit=${itemsPerPage}&page=${currentPage}`;
 
                 console.log("Fetching products with URL:", url);
 
                 const response = await fetch(url);
                 const data = await response.json();
 
-                console.log("API Response:", data);
-
-
                 const productArray = Array.isArray(data) ? data : Object.values(data);
 
-
                 if (Array.isArray(productArray) && productArray.length > 0) {
-                    setFilteredProducts(productArray);
+                    // Append new products if the page is greater than 1
+                    if (currentPage > 1) {
+                        setFilteredProducts((prevProducts) => [...prevProducts, ...productArray]);
+                    } else {
+                        setFilteredProducts(productArray);
+                    }
                     setNoProductsMessage("");
                 } else {
                     setFilteredProducts([]);
@@ -89,13 +98,13 @@ const HomePage = () => {
                 console.error("Error fetching products:", error);
                 setFilteredProducts([]);
                 setNoProductsMessage("Error fetching products. Please try again later.");
+            } finally {
+                setIsLoading(false); // End loading
             }
         };
 
-
         fetchProducts();
-    }, [appliedFilters]);
-
+    }, [appliedFilters, currentPage]); // Refetch when filters or current page change
 
     const handleSearchBrand = (e) => {
         const value = e.target.value;
@@ -104,7 +113,6 @@ const HomePage = () => {
         setShowDropdown(true);
     };
 
-
     const handleApplyFilters = () => {
         setAppliedFilters({
             searchBrand,
@@ -112,48 +120,49 @@ const HomePage = () => {
             selectedRating,
             selectedCategory
         });
+        setCurrentPage(1); // Reset to first page when filters are applied
+    };
+
+    const handleLoadMore = () => {
+        setCurrentPage((prevPage) => prevPage + 1); // Increment page number to load more products
     };
 
     return (
-        <div className="homepage-container">
-
-            <section className="banner-section">
-                <div className="banner-content">
-                    <h2>Exclusive Deals This Week!</h2>
-                    <p>Shop the latest deals in electronics and more, only this week!</p>
-                    <button className="shop-now-btn">Shop Now</button>
+        <div className="homepage">
+            <section className="homepage__banner">
+                <div className="homepage__banner-content">
+                    <h2 className="homepage__banner-title">Exclusive Deals This Week!</h2>
+                    <p className="homepage__banner-text">Shop the latest deals in electronics and more, only this week!</p>
+                    <button className="homepage__shop-now-btn">Shop Now</button>
                 </div>
             </section>
 
-
-            <header className="header">
-                <div className="logo">E-Shop</div>
-                <div onClick={()=>navigate("/search")}>
+            <header className="homepage__header">
+                <div className="homepage__logo">E-Shop</div>
+                <div className="homepage__search-icon" onClick={() => navigate("/search")}>
                     <FaSearch />
                 </div>
             </header>
 
-            <div className="main-content">
+            <div className="homepage__main-content">
+                <div className="homepage__sidebar">
+                    <h3 className="homepage__sidebar-title">Filters</h3>
 
-                <div className="sidebar">
-                    <h3>Filters</h3>
-
-
-                    <div className="filter-section">
-                        <h4>Brand</h4>
+                    <div className="homepage__filter-section">
+                        <h4 className="homepage__filter-title">Brand</h4>
                         <input
                             type="text"
                             value={searchBrand}
                             onChange={handleSearchBrand}
                             placeholder="Search brand"
-                            className="search-brand"
+                            className="homepage__search-brand"
                         />
                         {showDropdown && (
-                            <div className="dropdown">
+                            <div className="homepage__dropdown">
                                 {filteredBrands.map((brand, index) => (
                                     <div
                                         key={index}
-                                        className="dropdown-item"
+                                        className="homepage__dropdown-item"
                                         onClick={() => setSearchBrand(brand)}
                                     >
                                         {brand}
@@ -163,10 +172,9 @@ const HomePage = () => {
                         )}
                     </div>
 
-
-                    <div className="filter-section">
-                        <h4>Price Range</h4>
-                        <select onChange={(e) => setSelectedPriceRange(e.target.value)}>
+                    <div className="homepage__filter-section">
+                        <h4 className="homepage__filter-title">Price Range</h4>
+                        <select onChange={(e) => setSelectedPriceRange(e.target.value)} className="homepage__select">
                             <option value="">Select Price Range</option>
                             <option value="0-1000">₹0 - ₹1000</option>
                             <option value="1001-5000">₹1001 - ₹5000</option>
@@ -175,10 +183,9 @@ const HomePage = () => {
                         </select>
                     </div>
 
-
-                    <div className="filter-section">
-                        <h4>Rating</h4>
-                        <select onChange={(e) => setSelectedRating(e.target.value)}>
+                    <div className="homepage__filter-section">
+                        <h4 className="homepage__filter-title">Rating</h4>
+                        <select onChange={(e) => setSelectedRating(e.target.value)} className="homepage__select">
                             <option value="">Select Rating</option>
                             <option value="4">4 stars & above</option>
                             <option value="3">3 stars & above</option>
@@ -186,10 +193,9 @@ const HomePage = () => {
                         </select>
                     </div>
 
-
-                    <div className="filter-section">
-                        <h4>Category</h4>
-                        <select onChange={(e) => setSelectedCategory(e.target.value)}>
+                    <div className="homepage__filter-section">
+                        <h4 className="homepage__filter-title">Category</h4>
+                        <select onChange={(e) => setSelectedCategory(e.target.value)} className="homepage__select">
                             <option value="">Select Category</option>
                             {uniqueCategories.map((category, index) => (
                                 <option key={index} value={category}>
@@ -199,27 +205,23 @@ const HomePage = () => {
                         </select>
                     </div>
 
-
-                    <button onClick={handleApplyFilters} className="apply-filters-btn">
+                    <button onClick={handleApplyFilters} className="homepage__apply-filters-btn">
                         Apply Filters
                     </button>
                 </div>
 
-
-
-                <div className="product-grid">
+                <div className="homepage__product-grid">
                     {filteredProducts.length > 0 ? (
                         filteredProducts.map((product) => (
-
                             product.product_price && !isNaN(product.product_price) && product.product_price > 0 ? (
-                                <Link to={`/product/${product.product_id}`} key={product.product_id}>
-                                    <div className="product-card">
-                                        <img src={product.product_image_url} alt={product.product_name} />
-                                        <h3>{product.product_name}</h3>
-                                        <p className="price">
+                                <Link to={`/product/${product.product_id}`} key={product.product_id} className="homepage__product-link">
+                                    <div className="homepage__product-card">
+                                        <img src={product.product_image_url} alt={product.product_name} className="homepage__product-image" />
+                                        <h3 className="homepage__product-name">{product.product_name}</h3>
+                                        <p className="homepage__product-price">
                                             ₹{product.product_price.toFixed(2)}
                                         </p>
-                                        <p className="rating">Rating: {product.product_rating}⭐</p>
+                                        <p className="homepage__product-rating">Rating: {product.product_rating}⭐</p>
                                     </div>
                                 </Link>
                             ) : (
@@ -230,20 +232,24 @@ const HomePage = () => {
                         <p>{noProductsMessage}</p>
                     )}
                 </div>
-
             </div>
 
-
-            <div className="footer-app" style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#f5f5f5',
-                padding: '10px',
-                fontSize: '14px',
-            }}>
-                &copy; 2025 EDB-Shop. All rights reserved.
+            {/* Load More Button */}
+            <div className="homepage__load-more-container">
+                <button
+                    onClick={handleLoadMore}
+                    className="homepage__load-more-btn"
+                    disabled={isLoading} // Disable button while loading
+                >
+                    {isLoading ? "Loading..." : "Load More"}
+                </button>
             </div>
+
+            <footer className="homepage__footer">
+                <div className="homepage__footer-text">
+                    &copy; 2025 EDB-Shop. All rights reserved.
+                </div>
+            </footer>
         </div>
     );
 };

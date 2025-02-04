@@ -23,7 +23,7 @@ const Order = () => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3300/products/${productId}`);
+        const response = await fetch(`${process.env.REACT_APP_API_BACKEND}products/${productId}`);
         if (!response.ok) {
           throw new Error('Product not found');
         }

@@ -19,7 +19,7 @@ const RecommendedProducts = () => {
         // Fetch products with 4+ rating and update the state
         const fetchRecommendedProducts = async () => {
             try {
-                const url = `http://localhost:3300/products?minRating=4&page=${page}&limit=8`;
+                const url = `${process.env.REACT_APP_API_BACKEND}products?minRating=4&page=${page}&limit=8`;
                 const response = await fetch(url);
                 const data = await response.json();
                 const productArray = Array.isArray(data) ? data : Object.values(data);

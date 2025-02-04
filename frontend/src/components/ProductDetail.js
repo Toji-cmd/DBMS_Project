@@ -12,21 +12,26 @@ const ProductDetail = () => {
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3300/products/${productId}`);
+        console.log("API URL:", process.env.REACT_APP_API_BACKEND);
+        const API_URL = process.env.REACT_APP_API_BACKEND;
+        const response = await fetch(`${API_URL}products/${productId}`);
+  
         if (!response.ok) {
           throw new Error('Product not found');
         }
         const data = await response.json();
-        setProduct(data);  
-        setLoading(false);  
+        setProduct(data);
+        setLoading(false);
       } catch (err) {
-        setError(err.message);  
-        setLoading(false);  
+        console.error("Fetch error:", err);
+        setError(err.message);
+        setLoading(false);
       }
     };
-
-    fetchProductDetails();  
-  }, [productId]);  
+  
+    fetchProductDetails();
+  }, [productId]);
+   
 
   
   if (loading) {

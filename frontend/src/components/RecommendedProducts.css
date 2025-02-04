@@ -1,7 +1,9 @@
 .recommended-products {
   margin: 40px 0;
 }
-
+*{
+  text-decoration: none;
+}
 .recommended-products h3 {
   font-size: 24px;
   font-weight: bold;

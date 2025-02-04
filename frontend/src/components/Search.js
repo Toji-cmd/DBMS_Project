@@ -11,15 +11,15 @@ const SearchPage = () => {
 
     // Fetch products when the search query changes
     useEffect(() => {
-        const fetchProducts = async () => {
-            if (searchQuery.trim() === "") {
-                setFilteredProducts([]);
-                setNoProductsMessage("");
-                return;
-            }
+        if (searchQuery.trim() === "") {
+            setFilteredProducts([]);   // Clear the product list
+            setNoProductsMessage("");  // Clear the message
+            return;
+        }
 
+        const fetchProducts = async () => {
             try {
-                const url = `http://localhost:3300/search?q=${searchQuery}`;
+                const url = `${process.env.REACT_APP_API_BACKEND}search?q=${searchQuery}`;
                 const response = await fetch(url);
                 const data = await response.json();
                 const productArray = Array.isArray(data) ? data : Object.values(data);
@@ -59,7 +59,7 @@ const SearchPage = () => {
             {searchQuery.trim() === '' && <RecommendedProducts />}
             {/* Product list */}
             <div className="product-list">
-                {filteredProducts.length > 0 ? (
+                {searchQuery.trim() !== "" && filteredProducts.length > 0 ? (
                     filteredProducts.map((product) => (
                         <Link to={`/product/${product.product_id}`} key={product.product_id} className="product-item">
                             <img
@@ -69,16 +69,16 @@ const SearchPage = () => {
                             />
                             <div className="text-cont">
                                 <div className="child-text-cont">
-                                    <text className="product-name">{product.product_name}</text>
-                                    <text className="product-brand">{product.product_brand}</text>
+                                    <span className="product-name">{product.product_name}</span>
+                                    <span className="product-brand">{product.product_brand}</span>
                                 </div>
-                                <text className="product-price">${product.product_price}</text>
+                                <span className="product-price">₹{product.product_price}</span>
                             </div>
                         </Link>
                     ))
-                ) : (
+                ) : searchQuery.trim() !== "" ? (
                     <p>{noProductsMessage}</p>
-                )}
+                ) : null}
             </div>
         </div>
     );

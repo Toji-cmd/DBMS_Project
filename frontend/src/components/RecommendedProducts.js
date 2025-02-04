@@ -1,17 +1,46 @@
-import React, { useState } from "react";
-import data from "../data.json";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import './RecommendedProducts.css';
 
 const RecommendedProducts = ({ category }) => {
-  const recommended = data.filter((product) => product.product_category === category);
-
+  const [recommended, setRecommended] = useState([]);
   const [visibleItems, setVisibleItems] = useState(6); // Show 6 products initially
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch recommended products based on category
+  useEffect(() => {
+    const fetchRecommendedProducts = async () => {
+      try {
+        const API_URL = process.env.REACT_APP_API_BACKEND;
+        const response = await fetch(`${API_URL}products?category=${category}`);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch recommended products");
+        }
+
+        const data = await response.json();
+        setRecommended(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (category) {
+      fetchRecommendedProducts();
+    }
+  }, [category]);
 
   // Function to load more items
   const loadMore = () => {
-    setVisibleItems(visibleItems + 6); // Load 6 more items
+    setVisibleItems((prevVisibleItems) => prevVisibleItems + 6);
   };
+
+  if (loading) return <p>Loading recommended products...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (recommended.length === 0) return <p>No recommended products found.</p>;
 
   return (
     <div className="recommended-products">
