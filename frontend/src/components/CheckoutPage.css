@@ -1,0 +1,129 @@
+.checkout-container {
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h2, h3 {
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+.order-summary {
+    padding: 20px;
+    background: #f8f8f8;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #d5d3d3;
+}
+
+.order-summary h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease;
+}
+
+.order-item:hover {
+    background-color: #f1f1f1;
+}
+
+.order-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.order-item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.order-item-details h3 {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.order-item-details p {
+    font-size: 0.9rem;
+    margin: 0;
+    width: fit-content;
+}
+
+.checkout-form {
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #d5d3d3;
+
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.checkout-btn {
+    background: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.checkout-btn:hover {
+    background: #218838;
+}
+
+.checkout-btn:focus {
+    outline: none;
+}
+
+.order-summary h3, .checkout-form h3 {
+    font-family: Arial, sans-serif;
+    color: #333;
+    font-weight: bold;
+}
+
+.order-summary ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}

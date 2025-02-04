@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./HomePage.css";
-import { FaSearch } from "react-icons/fa";
+import { FaShoppingCart } from "react-icons/fa";
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -129,18 +129,21 @@ const HomePage = () => {
 
     return (
         <div className="homepage">
-            <section className="homepage__banner">
+            {/* <section className="homepage__banner">
                 <div className="homepage__banner-content">
                     <h2 className="homepage__banner-title">Exclusive Deals This Week!</h2>
                     <p className="homepage__banner-text">Shop the latest deals in electronics and more, only this week!</p>
                     <button className="homepage__shop-now-btn">Shop Now</button>
                 </div>
-            </section>
+            </section> */}
 
             <header className="homepage__header">
                 <div className="homepage__logo">E-Shop</div>
-                <div className="homepage__search-icon" onClick={() => navigate("/search")}>
-                    <FaSearch />
+                <div className="homepage__search_bar" onClick={() => navigate("/search")}>
+                    Search
+                </div>
+                <div className="homepage__cart-icon" onClick={() => navigate("/cart")}>
+                    <FaShoppingCart />
                 </div>
             </header>
 

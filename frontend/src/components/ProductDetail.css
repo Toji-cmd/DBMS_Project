@@ -142,7 +142,6 @@
     color: #b12704;
     margin-top: 10px;
 }
-
 @media (max-width: 768px) {
     .product-detail-container {
         flex-direction: column;

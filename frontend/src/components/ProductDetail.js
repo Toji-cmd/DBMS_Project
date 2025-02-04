@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";  
-import RecommendedProducts from "./RecommendedProducts";  
+import { useParams, Link } from "react-router-dom";
+import { openDB } from "idb";  // Import IndexedDB wrapper
+import RecommendedProducts from "./RecommendedProducts";
 import "./ProductDetail.css";
+import { FaShoppingCart } from "react-icons/fa";
 
 const ProductDetail = () => {
-  const { productId } = useParams();  
-  const [product, setProduct] = useState(null);  
-  const [loading, setLoading] = useState(true);  
-  const [error, setError] = useState(null);  
+  const { productId } = useParams();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [cartMessage, setCartMessage] = useState(""); // Message for cart feedback
 
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        console.log("API URL:", process.env.REACT_APP_API_BACKEND);
         const API_URL = process.env.REACT_APP_API_BACKEND;
         const response = await fetch(`${API_URL}products/${productId}`);
-  
+
         if (!response.ok) {
-          throw new Error('Product not found');
+          throw new Error("Product not found");
         }
         const data = await response.json();
         setProduct(data);
@@ -28,28 +30,43 @@ const ProductDetail = () => {
         setLoading(false);
       }
     };
-  
+
     fetchProductDetails();
   }, [productId]);
-   
 
-  
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // IndexedDB Setup
+  const initDB = async () => {
+    return openDB("EstoreDB", 1, {
+      upgrade(db) {
+        if (!db.objectStoreNames.contains("cart")) {
+          db.createObjectStore("cart", { keyPath: "product_id" });
+        }
+      },
+    });
+  };
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  // Add Product to Cart
+  const addToCart = async () => {
+    const db = await initDB();
+    const tx = db.transaction("cart", "readwrite");
+    const store = tx.objectStore("cart");
+    
+    await store.put({ product_id: product.product_id });
+    await tx.done;
 
-  if (!product) {
-    return <div>Product not found</div>;
-  }
+    setCartMessage("Added to Cart!");
+    setTimeout(() => setCartMessage(""), 2000); // Clear message after 2 sec
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!product) return <div>Product not found</div>;
 
   return (
     <div className="product-detail-page">
       <div className="product-detail-header">
         <Link to="/" className="back-to-home">Back to Home</Link>
+        <Link to="/cart" className="forwart-to-cart"><FaShoppingCart size={20} /></Link>
       </div>
 
       <div className="product-detail-container">
@@ -64,9 +81,8 @@ const ProductDetail = () => {
           <p className="brand">Brand: {product.product_brand}</p>
           <p className="weight">Weight: {product.product_weight}kg</p>
           
-          <Link to={`/order/${product.product_id}`}>
-            <button className="buy-now-btn">Buy Now</button>
-          </Link>
+          {/* Add to Cart Button */}
+          <button className="buy-now-btn" onClick={addToCart}>{cartMessage === ""? "Add to Cart":cartMessage}</button>
         </div>
       </div>
 
