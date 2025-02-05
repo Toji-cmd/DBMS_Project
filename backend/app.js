@@ -30,6 +30,11 @@ const app = express();
 app.use(cors()); 
 app.use(bodyParser.json({ limit: '50mb' }));
 
+// Get endpoint for the home path
+app.get('/', (req, res)=>{
+    res.send('Welcome to the DBMS Project API');
+});
+
 // POST endpoint to add a new product
 app.post('/products', async (req, res) => {
     try {
